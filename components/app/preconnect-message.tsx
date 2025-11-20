@@ -1,0 +1,62 @@
+'use client';
+
+import { AnimatePresence, motion } from 'motion/react';
+import { type ReceivedChatMessage } from '@livekit/components-react';
+import { ShimmerText } from '@/components/livekit/shimmer-text';
+import { cn } from '@/lib/utils';
+
+const MotionMessage = motion.create('p');
+
+const VIEW_MOTION_PROPS = {
+  variants: {
+    visible: {
+      opacity: 1,
+      transition: {
+        ease: 'easeIn' as const,
+        duration: 0.5,
+        delay: 0.8,
+      },
+    },
+    hidden: {
+      opacity: 0,
+      transition: {
+        ease: 'easeIn' as const,
+        duration: 0.5,
+        delay: 0,
+      },
+    },
+  },
+  initial: 'hidden' as const,
+  animate: 'visible' as const,
+  exit: 'hidden' as const,
+};
+
+interface PreConnectMessageProps {
+  messages?: ReceivedChatMessage[];
+  className?: string;
+  isAgentReady?: boolean;
+}
+
+export function PreConnectMessage({
+  className,
+  messages = [],
+  isAgentReady = false,
+}: PreConnectMessageProps) {
+  return (
+    <AnimatePresence>
+      {messages.length === 0 && (
+        <MotionMessage
+          {...VIEW_MOTION_PROPS}
+          aria-hidden={messages.length > 0}
+          className={cn('pointer-events-none text-center', className)}
+        >
+          <ShimmerText className="text-sm font-semibold">
+            {isAgentReady
+              ? 'Agent is listening, ask it a question'
+              : 'Agent is joining soon, give a moment'}
+          </ShimmerText>
+        </MotionMessage>
+      )}
+    </AnimatePresence>
+  );
+}
