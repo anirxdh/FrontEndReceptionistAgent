@@ -18,4 +18,3 @@ export interface Provider {
   insurance_accepted: string[];
   license_number: string;
 }
-
